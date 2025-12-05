@@ -23,7 +23,7 @@ router.post("/ask", auth, async (req, res) => {
       vector: queryEmbedding,
       topK: 5,
       includeMetadata: true,
-      filter: { documentId }   // ✅ IMPORTANT: restrict to selected PDF
+      filter: { documentId }   // IMPORTANT: restrict to selected PDF
     });
 
     const context = searchResult.matches
@@ -34,7 +34,7 @@ router.post("/ask", auth, async (req, res) => {
 
     let chat;
 
-    // ✅ CREATE CHAT
+    // CREATE CHAT
     if (!chatId) {
       chat = await Chat.create({
         userId: req.userId,
@@ -46,7 +46,7 @@ router.post("/ask", auth, async (req, res) => {
         ]
       });
     }
-    // ✅ UPDATE CHAT
+    // UPDATE CHAT
     else {
       chat = await Chat.findByIdAndUpdate(
         chatId,
@@ -80,8 +80,8 @@ router.post("/ask", auth, async (req, res) => {
 router.get("/history", auth, async (req, res) => {
   try {
     const chats = await Pdfs.find({ userId: req.userId })
-      .sort({ updatedAt: 1 })
-     
+      .sort({ createdAt: -1 })
+
 
     res.json(chats);
   } catch (err) {
@@ -94,7 +94,7 @@ router.get("/history/:documentId", auth, async (req, res) => {
     const chats = await Chat.find({
       userId: req.userId,
       documentId: req.params.documentId
-    }).sort({ updatedAt: -1 });
+    }).sort({ createdAt: -1 });
 
     res.json(chats);
   } catch (err) {

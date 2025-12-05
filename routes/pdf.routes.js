@@ -25,10 +25,10 @@ router.post("/upload", auth, upload.single("pdf"), async (req, res) => {
 
     const documentId = uuidv4();
 
-    // ✅ READ FILE
+    // READ FILE
     const pdfBuffer = fs.readFileSync(req.file.path);
 
-    // ✅ FIX: Buffer → Uint8Array (this was your crash)
+    // FIX: Buffer → Uint8Array (this was your crash)
     const loadingTask = pdfjsLib.getDocument({
       data: new Uint8Array(pdfBuffer)
     });
@@ -43,16 +43,16 @@ router.post("/upload", auth, upload.single("pdf"), async (req, res) => {
       fullText += pageText + "\n";
     }
 
-    // ✅ DELETE FILE AFTER READ
+    // DELETE FILE AFTER READ
     fs.unlinkSync(req.file.path);
 
-    // ✅ CHUNKING
+    // CHUNKING
     const chunks = [];
     for (let i = 0; i < fullText.length; i += 1000) {
       chunks.push(fullText.slice(i, i + 1000));
     }
 
-    // ✅ EMBEDDINGS + PINECONE
+    // EMBEDDINGS + PINECONE
     const vectors = [];
     for (let i = 0; i < chunks.length; i++) {
       const embedding = await getLocalEmbedding(chunks[i]);
@@ -70,7 +70,7 @@ router.post("/upload", auth, upload.single("pdf"), async (req, res) => {
 
     await index.upsert(vectors);
 
-    // ✅ STORE PDF METADATA IN MONGODB
+    // STORE PDF METADATA IN MONGODB
     await Pdf.create({
       userId: req.userId,
       name: req.file.originalname,

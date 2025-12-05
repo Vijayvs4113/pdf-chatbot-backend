@@ -15,7 +15,7 @@ async function getLocalEmbedding(text) {
     normalize: true,
   });
 
-  return Array.from(output.data); // ✅ 384-dim
+  return Array.from(output.data); // 384-dim
 }
 
 module.exports = { getLocalEmbedding };
