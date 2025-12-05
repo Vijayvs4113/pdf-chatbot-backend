@@ -4,7 +4,7 @@ const auth = require("../middleware/auth");
 const Chat = require("../models/Chat");
 const Pdfs = require("../models/Pdf");
 const { getLocalEmbedding } = require("../services/localEmbedding");
-const { askOllama } = require("../services/ollama");
+const { askGroq } = require("../services/groq");
 const { index } = require("../config/pinecone");
 
 router.post("/ask", auth, async (req, res) => {
@@ -30,7 +30,7 @@ router.post("/ask", auth, async (req, res) => {
       .map(m => m.metadata.text)
       .join(" ");
 
-    const answer = await askOllama(context, question);
+    const answer = await askGroq(context, question);
 
     let chat;
 
